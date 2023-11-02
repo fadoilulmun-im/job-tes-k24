@@ -14,7 +14,7 @@ class MemberController extends Controller
         if($request->ajax()){
             $data = User::with('member')
                     ->where('role_id', config('env.role.member'))
-                    // ->where('users.id', '!=', auth()->id())
+                    ->where('users.id', '!=', auth()->id())
                     ;
             return DataTables::of($data)
                     ->addIndexColumn()
