@@ -20,8 +20,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('member/json', [MemberController::class, 'json'])->name('member.json');
 Route::resource('administrator', AdministratorController::class)->middleware(['auth']);
 Route::resource('member', MemberController::class)->middleware(['auth']);
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

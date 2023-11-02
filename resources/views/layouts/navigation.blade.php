@@ -20,6 +20,9 @@
                             {{ __('Member') }}
                         </x-nav-link>
                     @endif
+                    <x-nav-link :href="route('member.json')" :active="request()->routeIs('member.json')">
+                        {{ __('Member Json') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -80,6 +83,9 @@
                     {{ __('Member') }}
                 </x-responsive-nav-link>
             @endif
+            <x-responsive-nav-link :href="route('member.json')" :active="request()->routeIs('member.json')">
+                {{ __('Member Json') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->

@@ -161,4 +161,9 @@ class MemberController extends Controller
             echo $e->getMessage();
         }
     }
+
+    public function json()
+    {
+        return response()->json(User::with('member')->where('role_id', config('env.role.member'))->get());
+    }
 }
