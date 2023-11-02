@@ -20,6 +20,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('artisan/{command}', function ($command) {
+    Artisan::call($command);
+    return Artisan::output();
+});
+
 Route::get('member/json', [MemberController::class, 'json'])->name('member.json');
 Route::resource('administrator', AdministratorController::class)->middleware(['auth']);
 Route::resource('member', MemberController::class)->middleware(['auth']);
