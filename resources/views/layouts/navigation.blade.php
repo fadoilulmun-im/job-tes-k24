@@ -12,9 +12,14 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('administrator.index')" :active="request()->routeIs('administrator.index')">
-                        {{ __('Administrator') }}
-                    </x-nav-link>
+                    @if (auth()->user()->role_id == config('env.role.administrator'))
+                        <x-nav-link :href="route('administrator.index')" :active="request()->routeIs('administrator.index')">
+                            {{ __('Administrator') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('member.index')" :active="request()->routeIs('member.index')">
+                            {{ __('Member') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -67,9 +72,14 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('administrator.index')" :active="request()->routeIs('administrator.index')">
-                {{ __('Administrator') }}
-            </x-responsive-nav-link>
+            @if (auth()->user()->role_id == config('env.role.administrator'))
+                <x-responsive-nav-link :href="route('administrator.index')" :active="request()->routeIs('administrator.index')">
+                    {{ __('Administrator') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('member.index')" :active="request()->routeIs('member.index')">
+                    {{ __('Member') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

@@ -34,15 +34,35 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'phone' => ['required', 'numeric'],
+            'date_of_birth' => ['required', 'date'],
+            'gender' => ['required', 'in:male,female'],
+            'ktp_number' => ['required', 'numeric', 'unique:members'],
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => bcrypt($request->password),
+            'role_id' => config('env.role.member'),
         ]);
 
-        event(new Registered($user));
+        if($request->hasFile('photo')){
+            $imageName = time().'.'.$request->photo->getClientOriginalExtension();
+            $request->photo->move(public_path('/uploads/member'), $imageName);
+            $photo = 'member/'.$imageName;
+        }
+
+        $user->member()->create([
+            'phone_number' => $request->phone,
+            'date_of_birth' => $request->date_of_birth,
+            'gender' => $request->gender,
+            'ktp_number' => $request->ktp_number,
+            'photo' => $photo ?? null,
+        ]);
+
+        // event(new Registered($user));
 
         Auth::login($user);
 

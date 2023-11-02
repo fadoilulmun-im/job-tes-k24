@@ -26,13 +26,38 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        if(auth()->user()->role_id == config('env.role.member')){
+            $request->validate([
+                'phone' => ['required', 'numeric'],
+                'date_of_birth' => ['required', 'date'],
+                'gender' => ['required', 'in:male,female'],
+                'ktp_number' => ['required', 'numeric', 'unique:members'],
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+        }
+
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
 
-        $request->user()->save();
+        DB::transaction(function () use($request) {
+            $request->user()->save();
+            if($request->hasFile('photo')){
+                $imageName = time().'.'.$request->photo->getClientOriginalExtension();
+                $request->photo->move(public_path('/uploads/member'), $imageName);
+                $photo = 'member/'.$imageName;
+            }
+
+            $request->user->member()->create([
+                'phone_number' => $request->phone,
+                'date_of_birth' => $request->date_of_birth,
+                'gender' => $request->gender,
+                'ktp_number' => $request->ktp_number,
+                'photo' => $photo ?? null,
+            ]);
+        });
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
